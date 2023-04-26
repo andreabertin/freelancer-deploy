@@ -1,0 +1,97 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-sidecar-config-map
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+      log_level: "debug"
+    positions:
+      filename: /tmp/positions.yaml
+    clients: # Specify target
+      - url: http://loki:3100/loki/api/v1/push
+    scrape_configs:
+      - job_name:  "flcstapi" 
+        static_configs: 
+          - targets: 
+              - localhost 
+            labels:
+              app: "storage-service"
+              __path__: /logs/*.log # Any file .log in the EmptyDir Volume.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freelancercustomerapi
+  labels:
+    app: freelancercustomerapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freelancercustomerapi
+  template:
+    metadata:
+      labels:
+        app: freelancercustomerapi
+    spec:
+      containers:
+        - name: freelancercustomerapi
+          image: andreabertin89/flcstapi:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: shared-logs # shared space monitored with Promtail
+              mountPath: /logs
+        - name: promtail
+          image: grafana/promtail:master
+          args:
+            - "-config.file=/etc/promtail/promtail.yaml" # Found in the ConfigMap
+          volumeMounts:
+            - name: config
+              mountPath: /etc/promtail
+            - name: shared-logs # shared space
+              mountPath: /logs
+      volumes:
+        - name: config
+          configMap:
+            name: promtail-sidecar-config-map
+        - name: shared-logs  # shared space monitored with Promtail
+          emptyDir:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: freelancercustomerapi
+  labels:
+    app: freelancercustomerapi
+spec:
+  type: LoadBalancer
+  selector:
+    app: freelancercustomerapi
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: freelancercustomerapi
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: freelancercustomerapi
+                port:
+                  number: 3000
