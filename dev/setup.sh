@@ -31,4 +31,5 @@ helm upgrade --install prometheus --namespace=freelancer prometheus-community/pr
 echo 'Expose Services externally'
 kubectl expose service grafana --type=LoadBalancer --target-port=3000 --port=8100 --name=grafana-np --namespace=freelancer
 kubectl expose service prometheus-server --type=LoadBalancer --target-port=9090 --port=8200 --name=prometheus-np --namespace=freelancer
+kubectl apply -f keycloak.yaml --namespace=freelancer
 kubectl apply -f freelancer-customer-ms.yaml --namespace=freelancer
