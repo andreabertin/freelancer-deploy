@@ -10,8 +10,8 @@ helm repo update
 kubectl create namespace freelancer
 
 # Add Grafana
-echo 'Add Grafana'
-helm upgrade --install grafana --namespace=freelancer grafana/grafana
+#echo 'Add Grafana'
+#helm upgrade --install grafana --namespace=freelancer grafana/grafana
 #kubectl get secret --namespace freelancer grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 
 # Add Loki
@@ -29,6 +29,6 @@ helm upgrade --install prometheus --namespace=freelancer prometheus-community/pr
 
 # Expose Services externally
 echo 'Expose Services externally'
-kubectl expose service grafana --type=LoadBalancer --target-port=3000 --port=8100 --name=grafana-np --namespace=freelancer
+#kubectl expose service grafana --type=LoadBalancer --target-port=3000 --port=8100 --name=grafana-np --namespace=freelancer
 kubectl expose service prometheus-server --type=LoadBalancer --target-port=9090 --port=8200 --name=prometheus-np --namespace=freelancer
 kubectl apply -k . --namespace=freelancer
