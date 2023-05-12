@@ -32,7 +32,7 @@ spec:
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:21.1.1
-          args: ["start-dev"]
+          args: ["start-dev", "--import-realm"]
           env:
             - name: KEYCLOAK_ADMIN
               value: "admin"
@@ -40,6 +40,9 @@ spec:
               value: "admin"
             - name: KC_PROXY
               value: "edge"
+          volumeMounts:
+            - name: keycloak-config-volume
+              mountPath: /opt/keycloak/data/import
           ports:
             - name: http
               containerPort: 8080
@@ -47,3 +50,7 @@ spec:
             httpGet:
               path: /realms/master
               port: 8080
+      volumes:
+        - name: keycloak-config-volume
+          configMap:
+            name: keycloak-config

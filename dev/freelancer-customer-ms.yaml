@@ -25,21 +25,21 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: freelancercustomerapi
+  name: freelancer-customer-ms
   labels:
-    app: freelancercustomerapi
+    app: freelancer-customer-ms
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: freelancercustomerapi
+      app: freelancer-customer-ms
   template:
     metadata:
       labels:
-        app: freelancercustomerapi
+        app: freelancer-customer-ms
     spec:
       containers:
-        - name: freelancercustomerapi
+        - name: freelancer-customer-ms
           image: andreabertin89/flcstapi:latest
           imagePullPolicy: Always
           ports:
@@ -66,13 +66,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: freelancercustomerapi
+  name: freelancer-customer-ms
   labels:
-    app: freelancercustomerapi
+    app: freelancer-customer-ms
 spec:
   type: LoadBalancer
   selector:
-    app: freelancercustomerapi
+    app: freelancer-customer-ms
   ports:
     - protocol: TCP
       port: 3000
@@ -81,7 +81,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: freelancercustomerapi
+  name: freelancer-customer-ms
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
 spec:
@@ -92,6 +92,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: freelancercustomerapi
+                name: freelancer-customer-ms
                 port:
                   number: 3000
