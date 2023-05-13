@@ -19,7 +19,7 @@ data:
           - targets: 
               - localhost 
             labels:
-              app: "storage-service"
+              app: "customer-ms"
               __path__: /logs/*.log # Any file .log in the EmptyDir Volume.
 ---
 apiVersion: apps/v1
