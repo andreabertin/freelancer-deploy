@@ -16,7 +16,7 @@ kubectl create namespace freelancer
 
 # Add Loki
 echo 'Add LOKI'
-helm upgrade --install promtail --namespace=freelancer grafana/promtail
+#helm upgrade --install promtail --namespace=freelancer grafana/promtail
 helm upgrade --install loki --namespace=freelancer grafana/loki-stack
 #Verify the application is working by running these commands:
 #* kubectl --namespace freelancer port-forward daemonset/promtail 3101
