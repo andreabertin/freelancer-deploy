@@ -1,7 +1,8 @@
+namespace: freelancer
 resources:
   - keycloak.yaml
   - grafana.yaml
-  - freelancer-customer-ms.yaml
+  - microservices/freelancer-customer-ms.yaml
 configMapGenerator:
   - name: keycloak-config
     files:
